@@ -15,7 +15,7 @@ Bicicleta.add = function(aBici) {
 }
 
 Bicicleta.findById = function(aBiciId) {
-    const aBici = Bicicleta.allBicis.find(x => x.id.toString() === aBiciId);
+    const aBici = Bicicleta.allBicis.find(x => x.id.toString() === aBiciId.toString());
     if(aBici) {
         return aBici;
     } else {
@@ -25,17 +25,17 @@ Bicicleta.findById = function(aBiciId) {
 
 Bicicleta.removeById = function(aBiciId) {
     for(let i = 0; i < Bicicleta.allBicis.length; i++) {
-        if(Bicicleta.allBicis[i].id.toString() === aBiciId){
+        if(Bicicleta.allBicis[i].id.toString() === aBiciId.toString()){
             Bicicleta.allBicis.splice(i, 1);
             break;
         }
     }
 }
 
-const a = new Bicicleta(1, 'rojo', 'urbana', [-34.94, -54.95]);
+/*const a = new Bicicleta(1, 'rojo', 'urbana', [-34.94, -54.95]);
 const b = new Bicicleta(2, 'azul', 'urbana', [-34.943, -54.951]);
 
 Bicicleta.add(a);
-Bicicleta.add(b);
+Bicicleta.add(b);*/
 
 module.exports = Bicicleta;
