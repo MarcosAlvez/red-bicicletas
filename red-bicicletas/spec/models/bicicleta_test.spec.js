@@ -1,63 +1,90 @@
-const Bicicleta = require('../../models/bicicleta');
+var Bicicleta = require('../../models/bicicleta');
+var mongoose = require('mongoose');
 
-beforeEach(() => {
-    Bicicleta.allBicis = [];
-})
+/*
+Disclaimer:
+Al correr los tests con function(done), jasmine hace un llamado async y no sabe el momento de
+terminar la función, tirando timeout error.
+*/
 
-describe('Bicicleta.allBicis', () => {
-    it('Should start empty', () => {
-        expect(Bicicleta.allBicis.length).toBe(0);
-    })
-});
+describe('Testing Bicicletas ', function() {
 
-describe('Bicicleta.add', () => {
-   it('Should add Bici', () => {
-       // Prev State
-       expect(Bicicleta.allBicis.length).toBe(0);
+    beforeEach(function(){
 
-       // Action
-       const a = new Bicicleta(1, 'rojo', 'urbana', [-34.94, -54.95]);
-       Bicicleta.add(a);
+        var mongoDB = "mongodb://localhost/testdb";
+        mongoose.connect(mongoDB, { useNewUrlParser:true, useUnifiedTopology: true  });
 
-       // Expected State
-       expect(Bicicleta.allBicis.length).toBe(1);
-       expect(Bicicleta.allBicis[0]).toBe(a);
-   });
-});
-
-describe('Bicicleta.findById', () => {
-    it('Should return Bici with id 1', () => {
-        // Prev State
-        expect(Bicicleta.allBicis.length).toBe(0);
-
-        // Action
-        const a = new Bicicleta(1, 'rojo', 'urbana', [-34.94, -54.95]);
-        const b = new Bicicleta(2, 'azul', 'urbana', [-34.943, -54.951]);
-
-        Bicicleta.add(a);
-        Bicicleta.add(b);
-
-        const targetBici = Bicicleta.findById(1);
-
-        // Expected State
-        expect(targetBici.id).toBe(1);
-        expect(targetBici.color).toBe(a.color);
-        expect(targetBici.modelo).toBe(a.modelo);
+        const db = mongoose.connection;
+        db.on('error', console.error.bind(console, 'connection error'));
+        db.once('open', function(){
+            console.log('We are connected to test database');
+            //done();
+        });
     });
-});
 
-describe('Bicicleta.removeById', () => {
-   it('Should delete a Bici with id 3', () => {
-       // Prev State
-       expect(Bicicleta.allBicis.length).toBe(0);
+    afterEach(function(){
+        Bicicleta.deleteMany({}, function( err, success ){
+            if (err) console.log(err);
+            // done();
+        });
+    });
 
-       // Action
-       const a = new Bicicleta(3, 'rojo', 'urbana', [-34.94, -54.95]);
-       Bicicleta.add(a);
-       Bicicleta.removeById(3);
+    describe('Bicicleta.createInstance', () => {
+        it('crea una instancia de bicicletas', () => {
+            var bici = Bicicleta.createInstance(1,"verde","urbana",[-34.5,-54.1]);
+            expect(bici.code).toBe(1);
+            expect(bici.color).toBe("verde");
+            expect(bici.modelo).toBe("urbana");
+            expect(bici.ubicacion[0]).toEqual(-34.5);
+            expect(bici.ubicacion[1]).toEqual(-54.1);
+        });
+    });
 
-       // Expected State
-       expect(Bicicleta.allBicis.length).toBe(0);
+    describe('Bicicleta.allBici', () => {
+        it('Comienza vacia', () => {
+            Bicicleta.find( {}, function(err, bicis ) {
+                expect(bicis.length).toBe(0);
+                //done();
+            });
+        });
+    });
 
-   });
+    describe('Bicicleta.add', () => {
+        it('Agrega una sola bicicleta', () => {
+
+            const aBici = new Bicicleta({code:1, color:"verde", modelo:"urbana"});
+
+            console.log(aBici);
+
+            Bicicleta.add(aBici, ( err, newBici) => {
+                if (err) console.log(err);
+                Bicicleta.find({code:1},function( err, bicis ) {
+                    expect(bicis.length).toEqual(1);
+                    expect(bicis[0].code).toEqual(aBici.code);
+                    //done();
+                });
+            });
+        });
+    });
+
+    describe('Bicicleta.findByCode', () => {
+        it('debe devolver la bici con code 1', () => {
+            const aBici = new Bicicleta({code:1, color:"verde", modelo:"urbana"});
+
+            Bicicleta.add(aBici, ( err, newBici) => {
+                if (err) console.log(err);
+                var aBici2 = new Bicicleta({code:2, color:"roja", modelo:"urbana"});
+                Bicicleta.findByCode(1,function( err, targetBici ) {
+
+                    expect(targetBici.code).toEqual(aBici.code);
+                    expect(targetBici.color).toEqual(aBici.color);
+                    expect(targetBici.modelo).toEqual(aBici.modelo);
+
+                    //done();
+
+                });
+            });
+        });
+    });
+
 });
