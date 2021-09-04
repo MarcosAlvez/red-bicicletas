@@ -1,5 +1,7 @@
 const Bicicleta = require('../models/bicicleta');
 
+//TODO: Update Bici controller
+
 exports.bicicletas_list = function(req, res) {
     res.render('bicicletas/index', {bicis: Bicicleta.allBicis});
 }
