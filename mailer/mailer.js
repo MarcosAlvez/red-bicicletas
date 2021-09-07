@@ -5,7 +5,10 @@ let mailConfig;
 
 if (process.env.NODE_ENV === 'production'){
     const options = {
+        server:	'smtp.sendgrid.net',
+        port: 587,
         auth: {
+            user: 'apikey',
             api_key: process.env.SG_API_SECRET
         }
     }
@@ -14,7 +17,10 @@ if (process.env.NODE_ENV === 'production'){
     if(process.env.NODE_ENV === 'staging'){
         console.log('***STAGING.ENV***');
         const options = {
+            server:	'smtp.sendgrid.net',
+            port: 587,
             auth: {
+                user: 'apikey',
                 api_key: process.env.SG_API_SECRET
             }
         }
