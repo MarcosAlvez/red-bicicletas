@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "node ./red-bicicletas/bin/www",
-  }
+  },
   "dependencies": {
     "express-generator": "^4.16.1",
     "g": "^2.0.1"
