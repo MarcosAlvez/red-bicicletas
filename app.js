@@ -55,6 +55,10 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/google3834f4919d625fcc', function (req, res){
+  res.sendfile('public/google3834f4919d625fcc.html');
+});
+
 app.get('/privacy_policy', function (req, res){
   res.render('privacy_policy');
 });
