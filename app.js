@@ -6,6 +6,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const passport = require('./config/passport');
 const session = require('express-session');
+const MongoDBStore = require('connect-mongodb-session')(session);
 const jwt = require('jsonwebtoken');
 
 const Usuario = require('./models/usuario');
@@ -19,7 +20,19 @@ var bicicletasAPIRouter = require('./routes/api/bicicletas');
 var usuariosAPIRouter = require('./routes/api/usuarios');
 var authAPIRouter = require('./routes/api/auth');
 
-const store = new session.MemoryStore();
+let store;
+if (process.env.NODE_ENV === 'development'){
+  store = new session.MemoryStore();
+}else{
+  store = new MongoDBStore({
+    uri: process.env.MONGO_URI,
+    collection: 'sessions'
+  });
+  store.on('error', function (err){
+    assert.ifError(err);
+    assert.ok(false);
+  });
+}
 
 var app = express();
 
@@ -34,14 +47,14 @@ app.use(session({
 }))
 
 var mongoose = require('mongoose');
+const assert = require("assert");
 // var mongoDB = 'mongodb://localhost/red_bicicletas';
 
 var mongoDB = process.env.MONGO_URI;
 
 mongoose.connect(mongoDB, {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise;
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'MongoDB connection error: '));
+mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error: '));
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -130,8 +143,21 @@ app.post('/resetPassword', function (req, res){
       }
     })
   })
-
 });
+
+app.get('/auth/google',
+    passport.authenticate('google', {
+      scope: [
+        'https://www.googleapis.com/auth/plus.login',
+        'https://www.googleapis.com/auth/plus.profile.emails.read' ] }
+    )
+);
+
+app.get( '/auth/google/callback',
+    passport.authenticate( 'google', {
+      successRedirect: '/',
+      failureRedirect: '/error'
+    }));
 
 app.use('/', indexRouter);
 app.use('/usuarios', usuariosRouter);

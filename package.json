@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
+    "connect-mongodb-session": "^3.1.0",
     "cookie-parser": "~1.4.4",
     "crypto": "^1.0.1",
     "debug": "~2.6.9",
@@ -24,6 +25,7 @@
     "nodemailer": "^6.6.3",
     "nodemailer-sendgrid-transport": "^0.2.0",
     "passport": "^0.4.1",
+    "passport-google-oauth20": "^2.0.0",
     "passport-local": "^1.0.0",
     "pug": "^3.0.2",
     "randombytes": "^2.1.0",
