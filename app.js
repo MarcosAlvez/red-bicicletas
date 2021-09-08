@@ -149,7 +149,8 @@ app.get('/auth/google',
     passport.authenticate('google', {
       scope: [
         'https://www.googleapis.com/auth/plus.login',
-        'https://www.googleapis.com/plus/v1/people/me' ] }
+        'https://www.googleapis.com/auth/plus.profile.emails.read',
+        'https://www.googleapis.com/oauth2/v3/userinfo'] }
     )
 );
 
