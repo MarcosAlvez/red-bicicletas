@@ -55,6 +55,14 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/privacy_policy', function (req, res){
+  res.render('privacy_policy');
+});
+
+app.get('/terms_and_conditions', function (req, res){
+  res.render('terms_conditions');
+});
+
 // Login statements
 app.get('/login', function (req, res) {
   res.render('./session/login');
